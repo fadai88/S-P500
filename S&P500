@@ -1,0 +1,56 @@
+import json
+import pandas as pd
+import datetime
+  
+# Opening JSON file
+def read_json(filename):
+    f = open(filename)
+  
+    # returns JSON object as 
+    # a dictionary
+    data = json.load(f)
+   
+    # Closing file
+    f.close()
+    return data
+data = read_json('sp500_constituents.json')
+
+
+from bs4 import BeautifulSoup
+from urllib.request import urlopen
+
+url = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
+page = urlopen(url)
+html = page.read().decode("utf-8")
+soup = BeautifulSoup(html, "html.parser")
+
+# extract 504 S&P companies as of now (6/3/2022)
+companies = soup.find_all('table')[0]
+df_stocks = pd.DataFrame(columns=['Ticker'])
+for row in companies.tbody.find_all('tr'):    
+    # Find all data for each column
+    columns = row.find_all('td')
+    if(columns != []):
+        ticker = columns[0].text.strip()
+        df_stocks = df_stocks.append({'Ticker': ticker}, ignore_index=True)
+
+# extract changes to the S&P500 list
+changes = soup.find_all('table')[1]
+df_changes = pd.DataFrame(columns=['Date', 'Added', 'Removed'])
+for row in changes.tbody.find_all('tr'):    
+    # Find all data for each column
+    columns = row.find_all('td')
+    if(columns != []):
+        date = columns[0].text.strip()
+        added = columns[1].text.strip()
+        removed = columns[3].text.strip()
+        df_changes = df_changes.append({'Date': date, 'Added': added,  'Removed': removed}, 
+                                       ignore_index=True)
+
+# change date format to match the date format of json data
+for dat in range(len(df_changes)):
+    df_changes['Date'][dat] = datetime.datetime.strptime(df_changes['Date'][dat], '%B %d, %Y').strftime('%Y/%m/%d')
+
+# generate a list of end-of-month dates ranging from Jan 1997 up to today    
+range_months = pd.date_range('1-Jan-1997','1-Jun-2022', freq='M').strftime("%Y/%m/%d").tolist()
+
