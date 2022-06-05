@@ -1,7 +1,8 @@
 import json
 import pandas as pd
 import datetime
-  
+
+"""  
 # Opening JSON file
 def read_json(filename):
     f = open(filename)
@@ -14,7 +15,7 @@ def read_json(filename):
     f.close()
     return data
 data = read_json('sp500_constituents.json')
-
+"""
 
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
@@ -50,7 +51,26 @@ for row in changes.tbody.find_all('tr'):
 # change date format to match the date format of json data
 for dat in range(len(df_changes)):
     df_changes['Date'][dat] = datetime.datetime.strptime(df_changes['Date'][dat], '%B %d, %Y').strftime('%Y/%m/%d')
-
+df_changes = df_changes.iloc[::-1]
 # generate a list of end-of-month dates ranging from Jan 1997 up to today    
-range_months = pd.date_range('1-Jan-1997','1-Jun-2022', freq='M').strftime("%Y/%m/%d").tolist()
+range_months = pd.date_range('1-Jul-1997','1-Jun-2022', freq='M').strftime("%Y/%m/%d").tolist()
 
+"""
+sp500_over_time[range_months[0]] = df_stocks['Ticker']
+for i in range(1, len(range_months)):
+    lst = sp500_over_time[range_months[i-1]]
+    for date in df_changes['Date']:
+        if range_months[i]:
+"""            
+# S&P constituents as of 1997/06/30
+# taken from https://raw.githubusercontent.com/fja05680/sp500/master/S%26P%20500%20Historical%20Components%20%26%20Changes(03-14-2022).csv
+sp199706 = "AAMRQ,AAPL,ABI,ABS,ABT,ABX,ACKH,ACV,ADBE,ADM,ADP,ADSK,AEE,AEP,AET,AGC,AGN,AHM,AIG,AIT,AL,ALL,AM,AMAT,AMD,AMGN,AMH,AMP,AN,ANDW,ANV,AON,APD,AR,ARC,ARNC,AS,ASC,ASH,AT,ATI,AVP,AVY,AXP,AZA.A,AZO,BA,BAC,BAX,BAY,BBI,BC,BCR,BDK,BDX,BEAM,BEV,BF.B,BFI,BFO,BGG,BHGE,BHMSQ,BK,BKB,BLL,BLS,BMET,BMGCA,BMS,BMY,BNI,BNL,BOL,BR,BSX,BT,BUD,C,CA,CAG,CAH,CAR,CAT,CB,CBB,CBE,CBS,CCI,CCK,CCTYQ,CEG,CEN,CFC,CFL,CG,CGP,CHA,CHRS,CI,CIN,CL,CLX,CMA,CMCSA,CMI,CNC,CNG,CNP,COMS,COP,COST,CPB,CPQ,CR,CSCO,CSE,CSR,CSX,CTB,CTX,CVS,CVX,CYM,D,DALRQ,DCNAQ,DD,DDS,DE,DEC,DELL,DGN,DI,DIGI,DIS,DJ,DLX,DOV,DOW,DRI,DTE,DUK,DXC,EC,ECH,ECL,ECO,ED,EFU,EFX,EHC,EIX,EKDKQ,EMC,EMN,EMR,ENRNQ,ENS,ETN,ETR,ETS,EXC,F,FBF,FCN,FCX,FDC,FDX,FE,FG,FITB,FJ,FL,FLMIQ,FLTWQ,FMC,FMCC,FNMA,FRO,FTL.A,FWLT,G,GAPTQ,GAS,GD,GDT,GDW,GE,GFS.A,GIDL,GIS,GLK,GLW,GNT,GP,GPC,GPS,GPU,GR,GRA,GRN,GSX,GT,GTE,GWF,GWW,H,HAL,HAS,HCA,HD,HES,HET,HFS,HI,HIG,HLT,HM,HNZ,HON,HP,HPC,HPH,HPQ,HRB,HRS,HSH,HSY,HUM,IBM,IFF,IKN,INCLF,INGR,INTC,IP,IPG,IR,ITT,ITW,JAVA,JCI,JCP,JH,JNJ,JOS,JP,JPM,JWN,K,KATE,KBH,KEY,KM,KMB,KMG,KO,KR,KRB,KRI,KWP,L,LB,LDG,LDW.B,LLX,LLY,LMT,LNC,LOW,LPX,LSI,LU,LUV,M,MAS,MAT,MAY,MBI,MCD,MCIC,MCO,MD,MDP,MDR,MDT,MEA,MEE,MEL,MER,MII,MIL,MKG,MMC,MMM,MNR,MO,MOB,MRK,MRO,MS,MSFT,MSI,MST,MTG,MTLQQ,MU,MWI,MWV,MYG,MZIAQ,NAE,NAV,NC,NCC,NEE,NEM,NKE,NLC,NLV,NMK,NOC,NOVL,NRTLQ,NSC,NSI,NSM,NUE,NWL,NYN,NYT,OAT,OKE,OMX,ONE,ORCL,ORX,OWENQ,OXY,PAS,PBI,PBY,PCAR,PCG,PCH,PD,PDG,PEG,PEP,PET,PFE,PG,PGL,PGN,PH,PHA,PHB,PHM,PKI,PLL,PNC,PNU,PPG,PPL,PPW,PRD,PTC,PVN,PX,PZE,R,RAD,RAL,RBD,RBK,RDC,RDS.A,RLM,RML,RNB,ROH,ROK,RRD,RSHCQ,RTN,RX,RYC,RYI,S,SAF,SB,SCHW,SCI,SEG,SFA,SFS,SGID,SGP,SHW,SIAL,SK,SLB,SMI,SMS,SNA,SNT,SO,SPGI,SRR,STI,STJ,STO,SUN,SVU,SWK,SYY,T,TA,TAP,TCOMA,TDM,TEK,TEN,TGNA,TGT,THC,TIN,TJX,TKR,TLAB,TMC,TMC.A,TMK,TMO,TNB,TOY,TRB,TRV,TRW,TUP,TWX,TX,TXN,TXT,TXU,UAWGQ,UCC,UCL,UCM,UIS,UK,UMG,UN,UNH,UNM,UNP,UPR,USB,USBC,USS,UST,USW,UTX,VFC,VO,VZ,WAI,WB,WBA,WCOEQ,WEN,WFC,WHR,WLA,WLL,WMB,WMT,WMX,WNDXQ,WOR,WWY,WY,WYE,X,XEL,XOM,XRX"
+lst = sp199706.split(",")
+
+sp500_over_time = dict()
+sp500_over_time['1997/06/30'] = lst
+for i in range(1, len(df_changes)):
+    for date in range_months:
+        if df_changes.iloc[i]['Date'][:7] != date[:7]:
+            sp500_over_time[range_months[i]] = sp500_over_time[range_months[i-1]]
+    
